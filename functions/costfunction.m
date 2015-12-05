@@ -10,6 +10,8 @@ function [J, dJ] = costfunction(inputs, targets, theta, hypothesis, lambda)
 	end
 
 	tmp = h - targets;
+
+	theta(1) = 0;
 	
 	J = 1/(2*m) * (tmp'*tmp + lambda * (theta'*theta));
 
