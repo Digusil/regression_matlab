@@ -14,15 +14,12 @@ lambda = 1;
 options = optimset('GradObj','on');
 
 tic
-theta1 = trainLinear(inputs, targets, lambda);
+[theta1, J1] = trainLinear(inputs, targets, lambda);
 t1 = toc;
 
 tic
-[theta2, J, flag] = train(inputs, targets, @testhypothesis, lambda, options);
+[theta2, J2, flag] = train(inputs, targets, @testhypothesis, lambda, options);
 t2 = toc;
-
-J1 = costfunction(inputs, targets, theta1, @testhypothesis, lambda);
-J2 = costfunction(inputs, targets, theta2, @testhypothesis, lambda);
 
 disp([t1, t2])
 

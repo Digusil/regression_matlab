@@ -22,5 +22,8 @@ function [y, mu, sigma] = dataScale(x, mode, mu, sigma)
         end
     end
     
+    mu(sigma==0) = 0;
+    sigma(sigma==0) = 1;
+    
     y = (x-ones(m,1)*mu)./(ones(m,1)*sigma);
 end
