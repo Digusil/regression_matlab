@@ -20,6 +20,10 @@ function [Y] = numRegFoo(T, y0, c)
 	
 	[t,y] = ode45(@(t,y) numRegdFoo(t,y,c), [0 tspan], ydata, options);
 
+	if size(idT,2) ~= 1
+		idT = idT';
+	end
+	
 	idx = sub2ind(size(y), idT, idY);
 %	Y = diag(y);
 	Y = y(idx);
