@@ -1,4 +1,4 @@
 %% numRegFoo
 function [dy] = numRegdFoo(t,y,c)
-	dy = -(c(1)*y.*t)+c(2);
+	dy = -c(1)*(1-(c(2)./y).^c(3)).*y;
 end
