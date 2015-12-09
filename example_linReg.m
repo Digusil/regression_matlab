@@ -14,7 +14,7 @@ inputs = [x(:), y(:), x(:).^2, y(:).^2, x(:).*y(:)];	% transform the coordinate 
 														% suitable matrix format
 
 tic						% start time measurement
-fitdata = linreg(inputs, z(:));		% fit data
+fitdata = linReg(inputs, z(:));		% fit data
 t = toc;				% stop time measurement
 
 mse = mean((fitdata.function(inputs) - z(:)).^2);		% calculate the mean square error
