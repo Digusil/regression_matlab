@@ -1,5 +1,5 @@
 %% regression: train a regression with bias
-function [fit_data] = regression(inputs, targets, hypothesis, theta0, options)
+function [fit_data] = calcReg(inputs, targets, hypothesis, theta0, options)
 
 	data = prepareRegression(inputs, targets);
 
@@ -23,7 +23,7 @@ function [fit_data] = regression(inputs, targets, hypothesis, theta0, options)
 	fit_data.function = @(x) common_hypothesis(x, theta, hypothesis, data);
 	fit_data.theta = theta;
 	fit_data.lambda = lambda;
-	fit_data.R2 = getR2(fit_data, data);
+	fit_data.R2 = getR2(hypothesis, theta, data);
 
 end
 
@@ -40,13 +40,13 @@ function [h] = common_hypothesis(inputs, theta, hypothesis, data)
 end
 
 %% getR2: get goodness of fit
-function [R2] = getR2(fit_data, data)
-
-	m = size(data.targets.test,1);
-
-	x = data.inputs.test .* (ones(m,1)*data.inputs.sigma) + ones(m,1)*data.inputs.mu;
-	y = data.targets.test .* (ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
-	
-	R2 = calcR2(fit_data.function(x), y);
-
-end
+% function [R2] = getR2(fit_data, data)
+%
+% 	m = size(data.targets.test,1);
+%
+% 	x = data.inputs.test .* (ones(m,1)*data.inputs.sigma) + ones(m,1)*data.inputs.mu;
+% 	y = data.targets.test .* (ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
+%
+% 	R2 = calcR2(fit_data.function(x), y);
+%
+% end
