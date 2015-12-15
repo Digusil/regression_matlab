@@ -29,8 +29,10 @@ data = splitDataRandom(inputs, targets, [70,30]);
 
 hypothesis = @(inputs, theta) numRegFoo(inputs(:,1), inputs(:,2), theta)./inputs(:,2);
 
+options2 = optimset('GradObj', 'off', 'Display', 'off', 'LargeScale', 'off');
+
 tic;
-[theta, J] = fminunc(@(theta) costfunction(data{1}.inputs, data{1}.targets, theta, hypothesis, 0), [1;1;1]);
+[theta, J] = fminunc(@(theta) costfunction(data{1}.inputs, data{1}.targets, theta, hypothesis, 0), [1;1;1], options2);
 t = toc;
 
 hold on
