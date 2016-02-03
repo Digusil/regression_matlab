@@ -13,10 +13,10 @@ function [J, dJ] = costfunction(inputs, targets, theta, hypothesis, lambda)
 
 	theta(1) = 0;
 	
-	J = 1/(2*m) * (tmp'*tmp + lambda * (theta'*theta));
+	J = 1/(2*m) * (sum(diag(tmp'*tmp)) + lambda * (theta'*theta));
 
 	if nargout > 1
-		dJ = 1/m * (dh'*tmp + lambda*theta);
+		dJ = 1/m * (sum(dh'*tmp,2) + lambda*theta);	% noch nicht geprüft...
 	end
 
 end
