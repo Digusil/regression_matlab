@@ -18,7 +18,7 @@ tic
 t1 = toc;
 
 tic
-[theta2, J2, flag] = train(inputs, targets, @testhypothesis, lambda, options);
+[theta2, J2, flag] = train(inputs, targets, @testhypothesis, lambda, [1;1], options);
 t2 = toc;
 
 disp([t1, t2])
