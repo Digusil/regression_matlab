@@ -4,7 +4,7 @@ clc
 
 init
 
-[x, y] = meshgrid(linspace(-10,10,1e2), linspace(-10,10,1e2));
+[x, y] = meshgrid(linspace(-10,10,10), linspace(-10,10,10));
 
 c = [1,2];
 
@@ -29,4 +29,4 @@ mse = mean((fitdata.function(inputs) - z(:)).^2);
 disp(['MSE: ',num2str(mse, '%.3e'),...
 	  ' with ', num2str(t, '%.3e'),' s'])
 
-check('linReg', mse < 1e-6, true)
+check('calcReg', mse < 1e-6, true)

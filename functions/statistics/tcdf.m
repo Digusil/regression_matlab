@@ -1,4 +1,4 @@
-% tcdf-Adaption form octave for Matlab without Statistic-Toolbox
+% tcdf-adaption form octave for Matlab without Statistic-Toolbox
 % Copyright (C) 2016 Pircher
 % Copyright (C) 2013-2015 Julien Bect
 % Copyright (C) 2012 Rik Wehbring
