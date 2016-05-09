@@ -1,9 +1,9 @@
 %% linReg: calculate a linear regression
-function [fit_data] = linReg(inputs, targets, lambda_list)
+function [fit_data] = linReg(data, lambda_list)
 
-	data = prepareLinReg(inputs, targets);
+	%data = prepareLinReg(inputs, targets);
 
-	if nargin < 3
+	if nargin < 2
 		lambda_list = 10.^linspace(-6,3,1e3);
 	end
 

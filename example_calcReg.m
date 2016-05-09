@@ -19,8 +19,10 @@ options = optimset('Display','off', 'GradObj','on');
 
 theta0 = zeros(size(inputs,2),1);
 
+data = prepareRegression(inputs, z(:));
+
 tic						% start time measurement
-fitdata = calcReg(inputs, z(:), @example_hypothesis, theta0, options);		% fit data
+fitdata = calcReg(data, @example_hypothesis, theta0, options);		% fit data
 t = toc;				% stop time measurement
 
 mse = mean((fitdata.function(inputs) - z(:)).^2);		% calculate the mean square error

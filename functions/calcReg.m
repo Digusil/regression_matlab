@@ -1,7 +1,7 @@
 %% regression: train a regression with bias
-function [fit_data] = calcReg(inputs, targets, hypothesis, theta0, options)
+function [fit_data] = calcReg(data, hypothesis, theta0, options)
 
-	data = prepareRegression(inputs, targets);
+	%data = prepareRegression(inputs, targets);
 
 	lambda_list = 10.^linspace(-6,3,1e3);
 

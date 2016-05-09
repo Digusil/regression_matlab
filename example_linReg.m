@@ -13,8 +13,10 @@ z = foo(x,y);			% create target data
 inputs = [x(:), y(:), x(:).^2, y(:).^2, x(:).*y(:)];	% transform the coordinate data to a 
 														% suitable matrix format
 
+data = prepareLinReg(inputs, z(:));
+
 tic						% start time measurement
-fitdata = linReg(inputs, z(:));		% fit data
+fitdata = linReg(data);		% fit data
 t = toc;				% stop time measurement
 
 mse = mean((fitdata.function(inputs) - z(:)).^2);		% calculate the mean square error

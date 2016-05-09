@@ -12,8 +12,10 @@ z = foo(x,y);
 
 inputs = [x(:), y(:), x(:).^2, y(:).^2, x(:).*y(:)];
 
+data = prepareLinReg(inputs, z(:));
+
 tic
-fitdata = linReg(inputs, z(:));
+fitdata = linReg(data);
 t = toc;
 
 mse = mean((fitdata.function(inputs) - z(:)).^2);

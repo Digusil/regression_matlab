@@ -20,8 +20,10 @@ options = optimset('Display','off', 'GradObj','on');
 
 theta0 = [1;1];
 
+data = prepareRegression(inputs, z(:));
+
 tic
-fitdata = calcReg(inputs, z(:), @testhypothesis, theta0, options);
+fitdata = calcReg(data, @testhypothesis, theta0, options);
 t = toc;
 
 mse = mean((fitdata.function(inputs) - z(:)).^2);
