@@ -35,6 +35,8 @@ function [fit_data] = linReg(data, lambda_list)
 	foo = @(inputs, theta) inputs*theta;
 	fit_data.se = standardError(data.inputs.test, data.targets.test, fit_data.theta, foo);
 	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.se), fit_data.df))*2;
+	
+	fit_data.rms = sqrt(mean((data.targets.test - fit_data.function(data.inputs.test(:,2:end))).^2));
 
 end
 
