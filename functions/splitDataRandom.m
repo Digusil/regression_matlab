@@ -1,4 +1,4 @@
-function data = splitDataRandom(inputs, targets, splitdistribution)
+function [data, id_data] = splitDataRandom(inputs, targets, splitdistribution, id_data)
     m = size(inputs, 1);    
 
     indeces_perm = randperm(m);
@@ -9,12 +9,17 @@ function data = splitDataRandom(inputs, targets, splitdistribution)
     ind = 0;
 
     for k = 1:N-1
-        ind = ind(end)+1:ind(end)+round(m*splitdistribution(k)/M);
-        data{k}.inputs = inputs(indeces_perm(ind),:);
-        data{k}.targets = targets(indeces_perm(ind),:);
+        if nargin < 4
+            id_data{k} = indeces_perm(1:round(m*splitdistribution(k)/M));
+            indeces_perm = indeces_perm(length(id_data{k}):end);
+        end
+        data{k}.inputs = inputs(id_data{k},:);
+        data{k}.targets = targets(id_data{k},:);
     end
 
-    ind = ind(end)+1:m;
-    data{N}.inputs = inputs(indeces_perm(ind),:);
-    data{N}.targets = targets(indeces_perm(ind),:);
+    if nargin < 4
+        id_data{N} = indeces_perm;
+    end
+    data{N}.inputs = inputs(id_data{N},:);
+    data{N}.targets = targets(id_data{N},:);
 end

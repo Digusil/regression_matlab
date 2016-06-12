@@ -1,10 +1,10 @@
 %% linReg: calculate a linear regression
-function [fit_data] = linReg(inputs, targets, lambda_list)
+function [fit_data] = linReg(data, lambda_list)
 
-	data = prepareLinReg(inputs, targets);
+	%data = prepareLinReg(inputs, targets);
 
-	if nargin < 3
-		lambda_list = 10.^linspace(-6,3,1e3);
+	if nargin < 2
+		lambda_list = [0, 10.^linspace(-6,3,1e3)];
 	end
 
 	lambda = inf;
@@ -24,17 +24,20 @@ function [fit_data] = linReg(inputs, targets, lambda_list)
 
 %	[m,n] = size(data.inputs.train);
 
+	foo = @(inputs, theta) inputs*theta;
+
 	fit_data.function = @(x) hypothesis(x, theta, data);
 	fit_data.theta = theta;
 	fit_data.lambda = lambda;
-	fit_data.R2 = getR2(fit_data, data);
+	fit_data.R2 = getR2(theta, foo, data);
 	fit_data.data = data;
 	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
 	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
 
-	foo = @(inputs, theta) inputs*theta;
 	fit_data.se = standardError(data.inputs.test, data.targets.test, fit_data.theta, foo);
 	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.se), fit_data.df))*2;
+	
+	fit_data.rms = getRMS(theta, foo, data);
 
 end
 
@@ -53,15 +56,27 @@ function [h] = hypothesis(inputs, theta, data)
 
 end
 
+%% getRMS: get RMS
+% function [rms] = getRMS(theta, data)
+% 
+% 	m = size(data.inputs.test,1);
+% %	x = data.inputs.test.*(ones(m,1)*data.inputs.sigma) + ones(m,1)*data.inputs.mu;
+% 
+% 	h = (data.inputs.test*theta).*(ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
+% 	y = data.targets.test.*(ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
+% 
+% 	rms = sqrt(mean((y - h).^2));
+% 
+% end
+
 %% getR2: get goodness of fit
-function [R2] = getR2(fit_data, data)
-
-	m = size(data.targets.test,1);
-
-	x = data.inputs.test .* (ones(m,1)*data.inputs.sigma) + ones(m,1)*data.inputs.mu;
-	x = x(:,2:end);
-	y = data.targets.test .* (ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
-	
-	R2 = calcR2(fit_data.function(x), y);
-
-end
+% function [R2] = getR2(theta, data)
+% 
+% 	m = size(data.targets.test,1);
+% 
+% 	h = (data.inputs.test*theta).*(ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
+% 	y = data.targets.test .* (ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
+% 
+% 	R2 = calcR2(h, y);
+% 
+% end
