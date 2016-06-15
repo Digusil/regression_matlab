@@ -1,10 +1,24 @@
 %% prepareLinReg: prepare the date to calculate a linear regression
-function [data, id_data] = prepareLinReg(inputs, targets, id_data)
-	
-	[inputs_data, inputs_mu, inputs_sigma]  = dataScale([ones(size(inputs,1),1),inputs]);
-	[targets_data, targets_mu, targets_sigma]  = dataScale(targets);
+function [data, id_data] = prepareLinReg(inputs, targets, scaling, id_data)
 	
 	if nargin < 3
+		scaling = true;
+	end
+
+	if scaling
+		[inputs_data, inputs_mu, inputs_sigma]  = dataScale([ones(size(inputs,1),1),inputs]);
+		[targets_data, targets_mu, targets_sigma]  = dataScale(targets);
+	else
+		inputs_data = [ones(size(inputs,1),1),inputs];
+		inputs_mu = zeros(1,size(inputs_data, 2));
+		inputs_sigma = ones(1,size(inputs_data, 2));
+
+		targets_data = targets;
+		targets_mu = zeros(1,size(targets_data, 2));
+		targets_sigma = ones(1,size(targets_data, 2));
+	end
+	
+	if nargin < 4
 		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, [60, 20, 20]);
 	else
 		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, [60, 20, 20], id_data);

@@ -1,10 +1,28 @@
 %% prepareRegression: prepare the date to calculate a common regression
-function [data] = prepareRegression(inputs, targets)
+function [data] = prepareRegression(inputs, targets, scaling, id_data)
 	
-	[inputs_data, inputs_mu, inputs_sigma]  = dataScale(inputs);
-	[targets_data, targets_mu, targets_sigma]  = dataScale(targets);
-	
-	tmpdata = splitDataRandom(inputs_data, targets_data, [60, 20, 20]);
+	if nargin < 3
+		scaling = true;
+	end
+
+	if scaling
+		[inputs_data, inputs_mu, inputs_sigma]  = dataScale(inputs);
+		[targets_data, targets_mu, targets_sigma]  = dataScale(targets);
+	else
+		inputs_data = inputs;
+		inputs_mu = zeros(1,size(inputs_data, 2));
+		inputs_sigma = ones(1,size(inputs_data, 2));
+
+		targets_data = targets;
+		targets_mu = zeros(1,size(targets_data, 2));
+		targets_sigma = ones(1,size(targets_data, 2));
+	end
+
+	if nargin < 4
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, [60, 20, 20]);
+	else
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, [60, 20, 20], id_data);
+	end
 
 	data.inputs.mu = inputs_mu;
 	data.inputs.sigma = inputs_sigma;
