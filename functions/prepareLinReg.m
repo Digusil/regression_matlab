@@ -6,8 +6,14 @@ function [data, id_data] = prepareLinReg(inputs, targets, varargin)
 	addRequired(p, 'inputs', @isnumeric);
 	addRequired(p, 'targets', @(x)validateattributes(x,{'numeric'},{'column'}));
 	addOptional(p, 'id_data', [], @iscell);
-	addParameter(p, 'scaling', true, @islogical);
-	addParameter(p, 'datasplit', [60, 20, 20], @(x)validateattributes(x,{'numeric'},{'size',[1,3]}));
+
+	if verLessThan('matlab', '8.2.0.29')
+		addParamValue(p, 'scaling', true, @islogical);
+		addParamValue(p, 'datasplit', [60, 20, 20], @(x)validateattributes(x,{'numeric'},{'size',[1,3]}));
+	else
+		addParameter(p, 'scaling', true, @islogical);
+		addParameter(p, 'datasplit', [60, 20, 20], @(x)validateattributes(x,{'numeric'},{'size',[1,3]}));
+	end
 
 	parse(p, inputs, targets, varargin{:});
 
