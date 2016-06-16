@@ -10,7 +10,7 @@ function [data, id_data] = splitDataRandom(inputs, targets, splitdistribution, i
 
     for k = 1:N-1
         if nargin < 4
-            id_data{k} = indeces_perm(1:round(m*splitdistribution(k)/M));
+            id_data{k} = indeces_perm(1:floor(m*splitdistribution(k)/M));
             indeces_perm = indeces_perm(length(id_data{k}):end);
         end
         data{k}.inputs = inputs(id_data{k},:);

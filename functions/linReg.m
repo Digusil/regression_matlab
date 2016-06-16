@@ -1,4 +1,6 @@
 %% linReg: calculate a linear regression
+
+% ToDo: savable fit object
 function [fit_data] = linReg(data, lambda_list)
 
 	%data = prepareLinReg(inputs, targets);

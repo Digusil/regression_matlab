@@ -1,4 +1,6 @@
 %% regression: train a regression with bias
+
+% ToDo: savable fit object
 function [fit_data] = calcReg(data, hypothesis, theta0, options)
 
 	%data = prepareRegression(inputs, targets);

@@ -1,27 +1,33 @@
 %% prepareLinReg: prepare the date to calculate a linear regression
-function [data, id_data] = prepareLinReg(inputs, targets, scaling, id_data)
-	
-	if nargin < 3
-		scaling = true;
-	end
+function [data, id_data] = prepareLinReg(inputs, targets, varargin)
 
-	if scaling
-		[inputs_data, inputs_mu, inputs_sigma]  = dataScale([ones(size(inputs,1),1),inputs]);
-		[targets_data, targets_mu, targets_sigma]  = dataScale(targets);
+	p = inputParser;
+
+	addRequired(p, 'inputs', @isnumeric);
+	addRequired(p, 'targets', @(x)validateattributes(x,{'numeric'},{'column'}));
+	addOptional(p, 'id_data', [], @iscell);
+	addParameter(p, 'scaling', true, @islogical);
+	addParameter(p, 'datasplit', [60, 20, 20], @(x)validateattributes(x,{'numeric'},{'size',[1,3]}));
+
+	parse(p, inputs, targets, varargin{:});
+
+	if p.Results.scaling
+		[inputs_data, inputs_mu, inputs_sigma]  = dataScale([ones(size(p.Results.inputs,1),1),p.Results.inputs]);
+		[targets_data, targets_mu, targets_sigma]  = dataScale(p.Results.targets);
 	else
-		inputs_data = [ones(size(inputs,1),1),inputs];
+		inputs_data = [ones(size(p.Results.inputs,1),1),p.Results.inputs];
 		inputs_mu = zeros(1,size(inputs_data, 2));
 		inputs_sigma = ones(1,size(inputs_data, 2));
 
-		targets_data = targets;
+		targets_data = p.Results.targets;
 		targets_mu = zeros(1,size(targets_data, 2));
 		targets_sigma = ones(1,size(targets_data, 2));
 	end
 	
-	if nargin < 4
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, [60, 20, 20]);
+	if isempty(p.Results.id_data)
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.datasplit);
 	else
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, [60, 20, 20], id_data);
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.datasplit, p.Results.id_data);
 	end
 
 	data.inputs.mu = inputs_mu;
