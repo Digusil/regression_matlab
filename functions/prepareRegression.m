@@ -1,5 +1,5 @@
 %% prepareRegression: prepare the date to calculate a common regression
-function [data] = prepareRegression(inputs, targets, varargin)
+function [data, id_data] = prepareRegression(inputs, targets, varargin)
 
 	p = inputParser;
 
@@ -31,9 +31,9 @@ function [data] = prepareRegression(inputs, targets, varargin)
 	end
 
 	if isempty(p.Results.id_data)
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.datasplit);
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, 'datasplit', p.Results.datasplit);
 	else
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.datasplit, p.Results.id_data);
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.id_data, 'datasplit', p.Results.datasplit);
 	end
 
 	data.inputs.mu = inputs_mu;

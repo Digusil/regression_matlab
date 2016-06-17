@@ -7,7 +7,7 @@ function [data, id_data] = prepareLinReg(inputs, targets, varargin)
 	addRequired(p, 'targets', @(x)validateattributes(x,{'numeric'},{'column'}));
 	addOptional(p, 'id_data', [], @iscell);
 
-	if verLessThan('matlab', '8.2.0.29')
+	if verLessThan('matlab', '8.2')
 		addParamValue(p, 'scaling', true, @islogical);
 		addParamValue(p, 'datasplit', [60, 20, 20], @(x)validateattributes(x,{'numeric'},{'size',[1,3]}));
 	else
@@ -31,9 +31,9 @@ function [data, id_data] = prepareLinReg(inputs, targets, varargin)
 	end
 	
 	if isempty(p.Results.id_data)
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.datasplit);
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, 'datasplit', p.Results.datasplit);
 	else
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.datasplit, p.Results.id_data);
+		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.id_data, 'datasplit', p.Results.datasplit);
 	end
 
 	data.inputs.mu = inputs_mu;
