@@ -2,7 +2,7 @@
 function [data, id_data] = prepareRegression(inputs, targets, varargin)
 
 	p = inputParser;
-	p.KeepUnmatched = true;
+%	p.KeepUnmatched = true;
 
 	addRequired(p, 'inputs', @isnumeric);
 	addRequired(p, 'targets', @(x)validateattributes(x,{'numeric'},{'column'}));
@@ -20,13 +20,15 @@ function [data, id_data] = prepareRegression(inputs, targets, varargin)
 		[inputs_data, inputs_mu, inputs_sigma]  = dataScale(p.Results.inputs);
 		[targets_data, targets_mu, targets_sigma]  = dataScale(p.Results.targets);
 	else
-		inputs_data = p.Results.inputs;
-		inputs_mu = zeros(1,size(inputs_data, 2));
-		inputs_sigma = ones(1,size(inputs_data, 2));
+		m = size(p.Results.inputs, 2);
+		[inputs_data, inputs_mu, inputs_sigma]  = dataScale(p.Results.inputs,...
+															zeros(1, m),...
+															ones(1, m));
 
-		targets_data = p.Results.targets;
-		targets_mu = zeros(1,size(targets_data, 2));
-		targets_sigma = ones(1,size(targets_data, 2));
+		m = size(p.Results.targets, 2);
+		[targets_data, targets_mu, targets_sigma]  = dataScale(p.Results.targets,...
+															   zeros(1, m),...
+															   ones(1, m));
 	end
 
 	[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, varargin{:});
