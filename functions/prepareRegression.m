@@ -2,6 +2,7 @@
 function [data, id_data] = prepareRegression(inputs, targets, varargin)
 
 	p = inputParser;
+	p.KeepUnmatched = true;
 
 	addRequired(p, 'inputs', @isnumeric);
 	addRequired(p, 'targets', @(x)validateattributes(x,{'numeric'},{'column'}));
@@ -9,10 +10,8 @@ function [data, id_data] = prepareRegression(inputs, targets, varargin)
 
 	if verLessThan('matlab', '8.2')
 		addParamValue(p, 'scaling', true, @islogical);
-		addParamValue(p, 'datasplit', [60, 20, 20], @(x)validateattributes(x,{'numeric'},{'size',[1,3]}));
 	else
 		addParameter(p, 'scaling', true, @islogical);
-		addParameter(p, 'datasplit', [60, 20, 20], @(x)validateattributes(x,{'numeric'},{'size',[1,3]}));
 	end
 
 	parse(p, inputs, targets, varargin{:});
@@ -30,11 +29,7 @@ function [data, id_data] = prepareRegression(inputs, targets, varargin)
 		targets_sigma = ones(1,size(targets_data, 2));
 	end
 
-	if isempty(p.Results.id_data)
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, 'datasplit', p.Results.datasplit);
-	else
-		[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, p.Results.id_data, 'datasplit', p.Results.datasplit);
-	end
+	[tmpdata, id_data] = splitDataRandom(inputs_data, targets_data, varargin{:});
 
 	data.inputs.mu = inputs_mu;
 	data.inputs.sigma = inputs_sigma;
