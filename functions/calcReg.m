@@ -5,7 +5,7 @@ function [fit_data] = calcReg(data, userhypothesis, theta0, options)
 
 	%data = prepareRegression(inputs, targets);
 
-	lambda_list = 10.^linspace(-6,3,1e3);
+	lambda_list = [0, 10.^linspace(-6,3,1e2)];
 
 	lambda = inf;
 	J = inf;
