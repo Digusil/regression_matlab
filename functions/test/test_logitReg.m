@@ -9,7 +9,16 @@ y = zeros(size(x));
 
 y(x>0) = 1;
 
-data = prepareLinReg(x, y, 'scaling', false);
+inputs = [x]; %, x.^2];
+
+data = prepareLinReg(inputs, y, 'scaling', false);
 
 options = optimset('Display','off', 'GradObj','on');
 fitdata = logitReg(data, [0;0], options);
+
+plot(x, fitdata.function(inputs))
+hold on
+scatter(x,y)
+hold off
+
+grid on

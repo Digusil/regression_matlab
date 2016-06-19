@@ -43,9 +43,10 @@ function [fit_data] = logitReg(data, theta0, options)
 	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
 %	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
 
-%	reglin = regLinearize(data.inputs.test, theta, logithypothesis);
-%	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, logithypothesis, reglin);
-%	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.ase), fit_data.df))*2;
+	reglin = regLinearize(data.inputs.test, theta, @logithypothesis);
+	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, @logithypothesis, reglin);
+	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.ase), fit_data.df))*2;
+	fit_data.wald = 1-chi2cdf((theta./fit_data.ase).^2, 1);
 
 %	fit_data.rms = getRMS(theta, logithypothesis, data);
 
