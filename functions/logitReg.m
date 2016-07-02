@@ -5,6 +5,13 @@ function [fit_data] = logitReg(data, theta0, options)
 
 	%data = prepareRegression(inputs, targets);
 
+	if nargin > 2
+		options_tmp = optimset('Display','off');
+		options = optimset(options_tmp, options);
+	else
+		options = optimset('Display','off');
+	end
+
 	lambda_list = [0, 10.^linspace(-6,3,1e2)];
 
 	lambda = inf;
