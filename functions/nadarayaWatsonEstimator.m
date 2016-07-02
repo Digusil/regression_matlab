@@ -1,8 +1,8 @@
-function [m, dm, ddm] = nadarayaWatsonEstimator(u_feature, y_feature, kernelFunction, h, scaleMode)
+function [m, dm, ddm] = nadarayaWatsonEstimator(u_feature, y_feature, kernelFunction, h, scaledKernel)
     [m_u, n_u] = size(u_feature);
     
     if numel(h) > 1
-        h = ones(m_u,1)*h;
+        h = ones(m_u,1)*h';
     end
     
     u = u_feature./h;
@@ -16,7 +16,7 @@ function [m, dm, ddm] = nadarayaWatsonEstimator(u_feature, y_feature, kernelFunc
             [K, dK, ddK] = kernelFunction(u);
     end
 
-    switch scaleMode
+    switch scaledKernel
         case 'scaled'
             Kh = K./h;
 
@@ -32,7 +32,7 @@ function [m, dm, ddm] = nadarayaWatsonEstimator(u_feature, y_feature, kernelFunc
     m = a./b;
     
     if any(isnan(m))
-        switch scaleMode
+        switch scaledKernel
             case 'scaled'
                 m(isnan(m)) = sum(y_feature./h(1,:)')/sum(1./h(1,:));
             case 'unscaled'
@@ -41,7 +41,7 @@ function [m, dm, ddm] = nadarayaWatsonEstimator(u_feature, y_feature, kernelFunc
     end
 
     if nargout > 1
-        switch scaleMode
+        switch scaledKernel
             case 'unscaled'
                 dK = -u./h.*dK;
 
@@ -74,7 +74,7 @@ function [m, dm, ddm] = nadarayaWatsonEstimator(u_feature, y_feature, kernelFunc
     end
     
     if nargout > 2
-        switch scaleMode
+        switch scaledKernel
             case 'unscaled'
                 ddK = u./(h.^2).*(2*dK+u.*ddK);
 
@@ -95,7 +95,7 @@ function [m, dm, ddm] = nadarayaWatsonEstimator(u_feature, y_feature, kernelFunc
         ddm = (dda.*b-2*da.*db-a.*ddb)./(b.^2) + (a.* db.^2)./(b.^3);
         
         if any(isnan(ddm))
-            switch scaleMode
+            switch scaledKernel
                 case 'scaled'
                     ddm(isnan(ddm)) = -sum(y_feature./h(1,:)')/sum(1./h(1,:));
                 case 'unscaled'

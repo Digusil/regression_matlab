@@ -5,9 +5,9 @@ function se = standardError(inputs, targets, theta, hypothesis, reglin)
 	sigma = sqrt(tmp'*tmp/(length(targets)-size(inputs,2)-1));
 
 	if nargin < 5
-		se = sigma * sqrt(diag(inv(inputs'*inputs)));
+		se = sigma * sqrt(diag(pinv(inputs'*inputs)));
 	else
-		se = sigma * sqrt(diag(inv(reglin'*reglin)));
+		se = sigma * sqrt(diag(pinv(reglin'*reglin)));
 	end
 
 end
