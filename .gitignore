@@ -1,0 +1,5 @@
+*.m~
+*.asc
+*.todo
+*.sublime-project
+*.sublime-workspace
