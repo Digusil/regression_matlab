@@ -1,25 +1,55 @@
-function [data, id_data] = splitDataRandom(inputs, targets, splitdistribution, id_data)
-    m = size(inputs, 1);    
+function [data, id_data] = splitDataRandom(inputs, targets, varargin)
 
-    indeces_perm = randperm(m);
+	defaultdatasplit = [60, 20, 20];
 
-    N = numel(splitdistribution);
-    M = sum(splitdistribution);
+	p = inputParser;
+	p.KeepUnmatched = true;
 
-    ind = 0;
+	addRequired(p, 'inputs', @isnumeric);
+	addRequired(p, 'targets', @(x)validateattributes(x,{'numeric'},{'column'}));
+	addOptional(p, 'id_data', [], @iscell);
 
-    for k = 1:N-1
-        if nargin < 4
-            id_data{k} = indeces_perm(1:round(m*splitdistribution(k)/M));
-            indeces_perm = indeces_perm(length(id_data{k}):end);
-        end
-        data{k}.inputs = inputs(id_data{k},:);
-        data{k}.targets = targets(id_data{k},:);
-    end
+	if verLessThan('matlab', '8.2')
+		addParamValue(p, 'datasplit', [], @(x) validateattributes(x,{'numeric'},{'size',[1,3]}));
+	else
+		addParameter(p, 'datasplit', [], @(x) validateattributes(x,{'numeric'},{'size',[1,3]}));
+	end
 
-    if nargin < 4
-        id_data{N} = indeces_perm;
-    end
-    data{N}.inputs = inputs(id_data{N},:);
-    data{N}.targets = targets(id_data{N},:);
+	parse(p, inputs, targets, varargin{:});
+
+	if ~isempty(p.Results.datasplit) & ~isempty(p.Results.id_data)
+		warning('id_data overrides the setted data split distribution')
+	end
+
+	if isempty(p.Results.datasplit)
+		datasplit = defaultdatasplit;
+	else
+		datasplit = p.Results.datasplit;
+	end
+
+	id_data = p.Results.id_data;
+
+	m = size(p.Results.inputs, 1);
+
+	indeces_perm = randperm(m);
+
+	N = numel(datasplit);
+	M = sum(datasplit);
+
+	ind = 0;
+
+	for k = 1:N-1
+		if isempty(p.Results.id_data)
+			id_data{k} = indeces_perm(1:floor(m*datasplit(k)/M));
+			indeces_perm = indeces_perm(length(id_data{k})+1:end);
+		end
+		data{k}.inputs = p.Results.inputs(id_data{k},:);
+		data{k}.targets = p.Results.targets(id_data{k},:);
+	end
+
+	if isempty(p.Results.id_data)
+		id_data{N} = indeces_perm;
+	end
+	data{N}.inputs = p.Results.inputs(id_data{N},:);
+	data{N}.targets = p.Results.targets(id_data{N},:);
 end

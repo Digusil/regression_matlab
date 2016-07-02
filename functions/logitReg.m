@@ -1,11 +1,11 @@
 %% regression: train a regression with bias
 
 % ToDo: savable fit object
-function [fit_data] = calcReg(data, userhypothesis, theta0, options)
+function [fit_data] = logitReg(data, theta0, options)
 
 	%data = prepareRegression(inputs, targets);
 
-	if nargin > 3
+	if nargin > 2
 		options_tmp = optimset('Display','off');
 		options = optimset(options_tmp, options);
 	else
@@ -24,10 +24,10 @@ function [fit_data] = calcReg(data, userhypothesis, theta0, options)
 		if count_flag >= 3
 			break
 		end
+		
+		[tmp_theta, tmp_J, flag] = trainlogit(data.inputs.train, data.targets.train, lambda_list(idl), theta0, options);
 
-		[tmp_theta, tmp_J, flag] = train(data.inputs.train, data.targets.train, userhypothesis, lambda_list(idl), theta0, options);
-
-%		tmp_J = costfunction(data.inputs.validate, data.targets.validate, tmp_theta, userhypothesis, lambda_list(idl));
+%		tmp_J = logitcostfunction(data.inputs.validate, data.targets.validate, tmp_theta, lambda_list(idl));
 
 		if flag == 0
 			count_flag = count_flag +1;
@@ -42,29 +42,30 @@ function [fit_data] = calcReg(data, userhypothesis, theta0, options)
 		end
 	end
 
-	fit_data.function = @(x) hypothesis(x, theta, userhypothesis, data);
+	fit_data.function = @(x) hypothesis([ones(size(x,1),1), x], theta, data);
 	fit_data.theta = theta;
 	fit_data.lambda = lambda;
-	fit_data.R2 = getR2(theta, userhypothesis, data);
+%	fit_data.R2 = getR2(theta, logithypothesis, data);
 	fit_data.data = data;
 	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
-	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
+%	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
 
-	reglin = regLinearize(data.inputs.test, theta, userhypothesis);
-	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, userhypothesis, reglin);
+	reglin = regLinearize(data.inputs.test, theta, @logithypothesis);
+	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, @logithypothesis, reglin);
 	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.ase), fit_data.df))*2;
+	fit_data.wald = 1-chi2cdf((theta./fit_data.ase).^2, 1);
 
-	fit_data.rms = getRMS(theta, userhypothesis, data);
+%	fit_data.rms = getRMS(theta, logithypothesis, data);
 
 end
 
 %% hypothesis: linear regression hypothesis
-function [h] = hypothesis(inputs, theta, userhypothesis, data)
+function [h] = hypothesis(inputs, theta, data)
 
 	m = size(inputs,1);
 	x = (inputs - ones(m,1)*data.inputs.mu)./(ones(m,1)*data.inputs.sigma);
 
-	h = userhypothesis(x, theta);
+	h = logithypothesis(x, theta);
 
 	h = h.*(ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
 

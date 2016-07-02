@@ -1,13 +1,28 @@
-function [y, mu, sigma] = dataScale(x, mode, mu, sigma)
-    m = size(x,1);
+function [y, mu, sigma] = dataScale(x, varargin)
+
+    p = inputParser;
+    p.KeepUnmatched = true;
+
+    addRequired(p, 'x', @isnumeric);
+    addOptional(p, 'mu', [], @isnumeric);
+    addOptional(p, 'sigma', [], @isnumeric);
+
+    if verLessThan('matlab', '8.2')
+        addParamValue(p, 'mode', 'std', @ischar);
+    else
+        addParameter(p, 'mode', 'std', @ischar);
+    end
+
+    parse(p, x, varargin{:});
+
+    assert(~xor(isempty(p.Results.mu), isempty(p.Results.sigma)), 'mu and sigma cannot exist allone.');
+
+    m = size(p.Results.x,1);
+    mu = p.Results.mu;
+    sigma = p.Results.sigma;
     
-    if nargin <= 2
-        if nargin < 2
-            mode = 'std';
-        end
-        
-        
-        switch mode
+    if isempty(p.Results.mu)     
+        switch p.Results.mode
             case 'std'
                 mu = mean(x,1);
                 sigma = std(x,[],1);
