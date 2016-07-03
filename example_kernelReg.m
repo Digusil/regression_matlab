@@ -4,16 +4,16 @@ clc
 
 init	% load functions
 
-[x, y] = meshgrid(linspace(-10,10,25), linspace(-10,10,25));	% create input data
+[x, y] = meshgrid(linspace(-10,10,100), linspace(-10,10,100));	% create input data
 
 foo = @(x,y) (x+y).^2;	% function that we wont to find
 
 z = foo(x,y);			% create target data
 
-inputs = [ones(length(x(:)),1),x(:), y(:), x(:).^2, y(:).^2, x(:).*y(:)];	% transform the
-																			% coordinate data
-																			% to a suitable matrix
-																			% format
+inputs = [x(:), y(:)];	% transform the
+						% coordinate data
+						% to a suitable matrix
+						% format
 
 options = optimset('Display','off', 'GradObj','on');
 
