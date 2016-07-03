@@ -32,7 +32,7 @@ function disp_check(checkname, check_result)
 	if check_result
 		disp(sprintf (['check ', checkname, ':\t passed']))
 	else
-		disp(sprintf (['check ', checkname, ':\t failed']))
+		warning(sprintf (['check ', checkname, ':\t failed']))
 	end
 
 end

@@ -10,8 +10,10 @@ function [data, id_data] = prepareRegression(inputs, targets, varargin)
 
 	if verLessThan('matlab', '8.2')
 		addParamValue(p, 'scaling', true, @islogical);
+		addParamValue(p, 'datasplit', [], @(x) validateattributes(x,{'numeric'},{'size',[1,3]}));
 	else
 		addParameter(p, 'scaling', true, @islogical);
+		addParameter(p, 'datasplit', [], @(x) validateattributes(x,{'numeric'},{'size',[1,3]}));
 	end
 
 	parse(p, inputs, targets, varargin{:});

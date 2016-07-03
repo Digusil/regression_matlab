@@ -1,6 +1,5 @@
 close all
 clear all
-clc
 
 init
 
@@ -26,9 +25,9 @@ tic
 fitdata = calcReg(data, @testhypothesis, theta0, options);
 t = toc;
 
-mse = mean((fitdata.function(inputs) - z(:)).^2);
+rmse = sqrt(mean((fitdata.function(inputs) - z(:)).^2));
 
-disp(['MSE: ',num2str(mse, '%.3e'),...
-	  ' with ', num2str(t, '%.3e'),' s'])
+% disp(['MSE: ',num2str(mse, '%.3e'),...
+% 	  ' with ', num2str(t, '%.3e'),' s'])
 
-check('calcReg', mse < 1e-6, true)
+check('calcReg', rmse < 1e-6, true)

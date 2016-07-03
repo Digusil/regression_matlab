@@ -1,6 +1,5 @@
 close all
 clear all
-clc
 
 init
 
@@ -26,30 +25,30 @@ t = toc;
 
 rmse = sqrt(mean((fitdata.function(inputs) - z(:)).^2));
 
-disp(['RMSE: ',num2str(rmse, '%.3e'),...
-	  ' with ', num2str(t, '%.3e'),' s'])
+% disp(['RMSE: ',num2str(rmse, '%.3e'),...
+% 	  ' with ', num2str(t, '%.3e'),' s'])
 
-check('calcReg', rmse < 1e-6, true)
+check('kernelReg', fitdata.R2 > 0.6, true)
 
-test = fitdata.function([x(:), y(:)]);
-
-figure()
-scatter3(x(:),y(:),z(:), 'fill')
-hold on
-surf(x,y,reshape(test, size(x)))
-hold off
-
-figure()
-
-scatter(z(:), test)
-
-linlim = [min([z(:); test(:)]), max([z(:); test(:)])];
-hold on
-plot(linlim, linlim, 'k')
-plot(linlim, linlim-fitdata.rms*2, 'r')
-plot(linlim, linlim+fitdata.rms*2, 'r')
-hold off
-
-grid on
-
-axis square
+% test = fitdata.function([x(:), y(:)]);
+% 
+% figure()
+% scatter3(x(:),y(:),z(:), 'fill')
+% hold on
+% surf(x,y,reshape(test, size(x)))
+% hold off
+% 
+% figure()
+% 
+% scatter(z(:), test)
+% 
+% linlim = [min([z(:); test(:)]), max([z(:); test(:)])];
+% hold on
+% plot(linlim, linlim, 'k')
+% plot(linlim, linlim-fitdata.rms*2, 'r')
+% plot(linlim, linlim+fitdata.rms*2, 'r')
+% hold off
+% 
+% grid on
+% 
+% axis square

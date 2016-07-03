@@ -1,6 +1,5 @@
 close all
 clear all
-clc
 
 init
 
@@ -18,9 +17,9 @@ tic
 fitdata = linReg(data);
 t = toc;
 
-mse = mean((fitdata.function(inputs) - z(:)).^2);
+rmse = sqrt(mean((fitdata.function(inputs) - z(:)).^2));
 
-disp(['MSE: ',num2str(mse, '%.3e'),...
-	  ' with ', num2str(t, '%.3e'),' s'])
+% disp(['MSE: ',num2str(mse, '%.3e'),...
+% 	  ' with ', num2str(t, '%.3e'),' s'])
 
-check('linReg', mse < 1e-6, true)
+check('linReg', rmse < 1e-6, true)

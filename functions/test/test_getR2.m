@@ -1,17 +1,14 @@
 close all
 clear all
-clc
 
 init
 
-data.inputs.test = [1;2;3];
-data.inputs.sigma = 1;
-data.inputs.mu = 1;
-
-data.targets.test = [4;9;16];
-data.targets.sigma = 1;
-data.targets.mu = 0;
+data = prepareRegression([1;2;3], [4;9;16], 'datasplit', [0,0,100]);
 
 hypothesis= @(x, theta) (theta+x).^2;
 
-R2 = getR2(hypothesis, 1, data)
+R2 = getR2(1, hypothesis, data);
+
+R2test = calcR2(hypothesis(data.inputs.test, 1), data.targets.test);
+
+check('getR2', abs(R2-R2test) < 1e-6, true);
