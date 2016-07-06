@@ -24,8 +24,8 @@ function [y, mu, sigma] = dataScale(x, varargin)
     if isempty(p.Results.mu)     
         switch p.Results.mode
             case 'std'
-                mu = mean(x,1);
-                sigma = std(x,[],1);
+                mu = nanmean(x,1);
+                sigma = nanstd(x,[],1);
             case 'range'
                 mu = mean(x,1);
                 sigma = range(x,1);
