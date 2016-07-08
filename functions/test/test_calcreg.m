@@ -30,7 +30,7 @@ function result = test_calcreg
 	% 	  ' with ', num2str(t, '%.3e'),' s'])
 
 	if nargout > 0
-		result = check('calcReg', rmse < 1e-6, true);
+		result = check('calcReg', rmse < 1e-4, true);
 	else
 		check('calcReg', rmse < 1e-6, true)
 	end
