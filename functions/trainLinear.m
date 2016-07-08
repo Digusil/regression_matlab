@@ -7,6 +7,6 @@ function [theta, J] = trainLinear(inputs, targets, lambda)
 	theta = pinv(inputs'*inputs + lambda * E) * inputs' * targets;
 
 	if nargout > 1
-		J = costfunction(inputs, targets, theta, linReghypothesis(inputs, theta), lambda);
+		J = costfunction(inputs, targets, theta, @linReghypothesis, lambda);
 	end
 end

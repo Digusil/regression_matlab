@@ -1,26 +1,30 @@
-close all
-clear all
-clc
+function result = test_trainLinear
 
-init
+	init
 
-m = 10;		% Samples
+	m = 10;		% Samples
 
-inputs = [linspace(1,10,m)', linspace(-3,6,m)'];
-targets = linspace(2,11,m)';
+	inputs = [linspace(1,10,m)', linspace(-3,6,m)'];
+	targets = linspace(2,11,m)';
 
-lambda = 1;
+	lambda = 1;
 
-options = optimset('GradObj','on');
+	options = optimset('GradObj','on');
 
-tic
-[theta1, J1] = trainLinear(inputs, targets, lambda);
-t1 = toc;
+	tic
+	[theta1, J1] = trainLinear(inputs, targets, lambda);
+	t1 = toc;
 
-tic
-[theta2, J2, flag] = train(inputs, targets, @testhypothesis, lambda, [1;1], options);
-t2 = toc;
+	tic
+	[theta2, J2, flag] = train(inputs, targets, @testhypothesis, lambda, [1;1], options);
+	t2 = toc;
 
-disp([t1, t2])
+%	disp([t1, t2])
 
-check('trainLinear', J1 < J2, true)
+	if nargout > 0
+		result = check('trainLinear', J1 < J2, true);
+	else
+		check('trainLinear', J1 < J2, true)
+	end
+
+end

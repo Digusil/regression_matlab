@@ -13,9 +13,9 @@ function [fit_data] = linReg(data, lambda_list)
 	J = inf;
 
 	for idl = 1:length(lambda_list)
-		tmp_theta = trainLinear(data.inputs.train, data.targets.train, lambda_list(idl));
+		[tmp_theta, tmp_J] = trainLinear(data.inputs.train, data.targets.train, lambda_list(idl));
 
-		tmp_J = costfunction(data.inputs.validate, data.targets.validate, tmp_theta, @(inputs, theta) inputs*theta, lambda_list(idl));
+%		tmp_J = costfunction(data.inputs.validate, data.targets.validate, tmp_theta, @linReghypothesis, lambda_list(idl));
 
 		if tmp_J < J
 			theta = tmp_theta;
