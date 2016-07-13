@@ -5,6 +5,8 @@ validation and test set. Using the training set values of theta can be calculate
 for any hypothesis. Lambda is determined by detecting an optimum of the costfunction.
 Afterwards the coefficient of determination is computed for the test set.
 
+This script is under construction.
+
 =======
 ## Examples
 **example_linReg.m** calculates the regression for a linear hypothesis.
