@@ -23,10 +23,8 @@ the best fitting value of lambda and the calculated coefficient of determination
 **example_hypothesis.m**.
 
 ## Motivation
-Reasons for implementing this regression code:
-- follow every step of the calculation
-- get a significant fit by distributing the applied values in sets
-- apply code for different hypotheses without changing the environment
+The reason for programming this set of functions was to obtain full control over the calculation of the Regression. As well the advanced User should get an insight, what is happening behind function calls. In addition, a special feature of the set is the extension of the range of functions to Kernel Regression and Logistic Regression. All Regression Models can be implemented the same, easy way through the unification of the parameters and input variables. 
+The development of the program is ensured by constant self-use and research requirements. 
 
 ## Usage
 Run calcReg.m in Matlab. Load input and target values in your workspace and choose
