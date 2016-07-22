@@ -1,0 +1,1 @@
+run fullfile(PATH_OF_THE_REGESSION_DIRECTORY,'init.m')
