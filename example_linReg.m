@@ -23,3 +23,8 @@ mse = mean((fitdata.function(inputs) - z(:)).^2);		% calculate the mean square e
 
 disp(['MSE: ',num2str(mse, '%.3e'),...					% display the MSE and the calculation time
 	  ' with ', num2str(t, '%.3e'),' s'])
+  
+figure()
+plot3(x,y,z)
+hold on 
+plot(fitdata.function(inputs))
