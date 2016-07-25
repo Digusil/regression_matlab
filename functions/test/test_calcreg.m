@@ -24,7 +24,7 @@ function result = test_calcreg
 	fitdata = calcReg(data, @testhypothesis, theta0, options);
 	t = toc;
 
-	rmse = sqrt(mean((fitdata.function(inputs) - z(:)).^2));
+	rmse = sqrt(mean((fitdata.eval(inputs) - z(:)).^2));
 
 	% disp(['MSE: ',num2str(mse, '%.3e'),...
 	% 	  ' with ', num2str(t, '%.3e'),' s'])

@@ -26,20 +26,22 @@ function [fit_data] = linReg(data, lambda_list)
 
 %	[m,n] = size(data.inputs.train);
 
-%	foo = @(inputs, theta) inputs*theta;
+	foo = @(inputs, theta) inputs*theta;
 
-	fit_data.function = @(x) hypothesis(x, theta, data);
-	fit_data.theta = theta;
-	fit_data.lambda = lambda;
-	fit_data.R2 = getR2(theta, @linReghypothesis, data);
-	fit_data.data = data;
-	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
-	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
+%	fit_data.function = @(x) hypothesis(x, theta, data);
+%	fit_data.theta = theta;
+%	fit_data.lambda = lambda;
+%	fit_data.R2 = getR2(theta, @linReghypothesis, data);
+%	fit_data.data = data;
+%	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
+%	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
+%
+%	fit_data.se = standardError(data.inputs.test, data.targets.test, fit_data.theta, @linReghypothesis);
+%	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.se), fit_data.df))*2;
+%	
+%	fit_data.rms = getRMS(theta, @linReghypothesis, data);
 
-	fit_data.se = standardError(data.inputs.test, data.targets.test, fit_data.theta, @linReghypothesis);
-	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.se), fit_data.df))*2;
-	
-	fit_data.rms = getRMS(theta, @linReghypothesis, data);
+	fit_data = regressiondata(foo, theta, lambda, data, 'linear');
 
 end
 

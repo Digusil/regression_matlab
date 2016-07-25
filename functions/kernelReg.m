@@ -95,19 +95,21 @@ function [fit_data] = kernelReg(data, varargin)
 															theta,...
 															p.Results.kernelscaling);
 
-	fit_data.function = @(x) hypothesis(x, theta, kernel_hypothesis, data);
-	fit_data.theta = theta;
-	fit_data.lambda = [];
-	fit_data.R2 = getR2(theta, kernel_hypothesis, data);
-	fit_data.data = data;
-	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
-	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
+%	fit_data.function = @(x) hypothesis(x, theta, kernel_hypothesis, data);
+%	fit_data.theta = theta;
+%	fit_data.lambda = [];
+%	fit_data.R2 = getR2(theta, kernel_hypothesis, data);
+%	fit_data.data = data;
+%	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
+%	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
+%
+%	reglin = regLinearize(data.inputs.test, theta, kernel_hypothesis);
+%	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, kernel_hypothesis, reglin);
+%	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.ase), fit_data.df))*2;
+%
+%	fit_data.rms = getRMS(theta, kernel_hypothesis, data);
 
-	reglin = regLinearize(data.inputs.test, theta, kernel_hypothesis);
-	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, kernel_hypothesis, reglin);
-	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.ase), fit_data.df))*2;
-
-	fit_data.rms = getRMS(theta, kernel_hypothesis, data);
+	fit_data = regressiondata(kernel_hypothesis, theta, [], data, 'kernel');
 
 end
 
