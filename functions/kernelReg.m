@@ -21,6 +21,10 @@ function [fit_data] = kernelReg(data, varargin)
 
 	parse(p, data, varargin{:});
 
+	regoptions.kernel = p.Results.kernel;
+	regoptions.kernelscaling = p.Results.kernelscaling;
+	regoptions.mode = p.Results.mode;
+
 	u_feature_train = krFeature(data.inputs.validate, data.inputs.train);
 	
 	switch p.Results.kernel
@@ -68,26 +72,10 @@ function [fit_data] = kernelReg(data, varargin)
 																	theta,...
 																	p.Results.kernelscaling);
 
-	theta = train(u_feature_train, data.targets.validate, kernel_hypothesis, 0, theta0, p.Results.options);
+%	theta = train(u_feature_train, data.targets.validate, kernel_hypothesis, 0, theta0, p.Results.options);
 
-	%data = prepareRegression(inputs, targets);
-
-	%lambda_list = 10.^linspace(-6,3,1e3);
-
-	%lambda = inf;
-	%J = inf;
-
-	%for idl = 1:length(lambda_list)
-	%	tmp_theta = train(data.inputs.train, data.targets.train, userhypothesis, lambda_list(idl), theta0, options);
-
-	%	tmp_J = costfunction(data.inputs.validate, data.targets.validate, tmp_theta, userhypothesis, lambda_list(idl));
-
-	%	if tmp_J < J
-	%		theta = tmp_theta;
-	%		lambda = lambda_list(idl);
-	%		J = tmp_J;
-	%	end
-	%end
+	costfun = @(theta, lambda) costfunction(u_feature_train, data.targets.validate, theta, kernel_hypothesis, lambda);
+	[theta, J, lambda, flag] = train(costfun, 0, theta0, p.Results.options);
 
 	kernel_hypothesis = @(x, theta) nadarayaWatsonEstimator(krFeature(x, data.inputs.train),...
 															data.targets.train,...
@@ -95,32 +83,6 @@ function [fit_data] = kernelReg(data, varargin)
 															theta,...
 															p.Results.kernelscaling);
 
-%	fit_data.function = @(x) hypothesis(x, theta, kernel_hypothesis, data);
-%	fit_data.theta = theta;
-%	fit_data.lambda = [];
-%	fit_data.R2 = getR2(theta, kernel_hypothesis, data);
-%	fit_data.data = data;
-%	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
-%	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
-%
-%	reglin = regLinearize(data.inputs.test, theta, kernel_hypothesis);
-%	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, kernel_hypothesis, reglin);
-%	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.ase), fit_data.df))*2;
-%
-%	fit_data.rms = getRMS(theta, kernel_hypothesis, data);
-
-	fit_data = regressiondata(kernel_hypothesis, theta, [], data, 'kernel');
-
-end
-
-%% hypothesis: linear regression hypothesis
-function [h] = hypothesis(inputs, theta, userhypothesis, data)
-
-	m = size(inputs,1);
-	x = (inputs - ones(m,1)*data.inputs.mu)./(ones(m,1)*data.inputs.sigma);
-
-	h = userhypothesis(x, theta);
-
-	h = h.*(ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
+	fit_data = regressiondata(kernel_hypothesis, theta, [], data, 'kernel', regoptions);
 
 end

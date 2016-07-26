@@ -10,6 +10,7 @@ classdef regressiondata
 		rms
 		pvalue
 		wald
+		options
 	end
 	properties(SetAccess = private)%, Hidden = true)
 		hypothesis
@@ -27,6 +28,8 @@ classdef regressiondata
 			addRequired(p, 'data', @isstruct);
 			addRequired(p, 'regtype', @ischar);
 
+			addOptional(p, 'regoptions', [], @isstruct);
+
 			parse(p, hypothesis, theta, lambda, data, regtype, varargin{:});
 
 			obj.hypothesis = p.Results.hypothesis;
@@ -34,14 +37,17 @@ classdef regressiondata
 			obj.lambda = p.Results.lambda;
 			obj.data = p.Results.data;
 			obj.regtype = p.Results.regtype;
+			obj.options = p.Results.regoptions;
 
 			if ~strcmp(obj.regtype, 'logit')
 				obj.rms = getRMS(obj.theta, obj.hypothesis, obj.data);
 			end
 
-			obj.df = size(obj.data.targets.train, 1) - length(obj.theta) -1;
+			obj.df = size(obj.data.targets.train, 1) - length(obj.theta);% -1;
 			obj.R2 = getR2(obj.theta, obj.hypothesis, obj.data);
-			obj.adjR2 = 1-(1-obj.R2)*(size(obj.data.targets.train, 1)-1)/obj.df;
+			if ~strcmp(obj.regtype, 'kernel')
+				obj.adjR2 = 1-(1-obj.R2)*(size(obj.data.targets.train, 1)-1)/obj.df;
+			end
 
 			reglin = regLinearize(obj.data.inputs.test, obj.theta, obj.hypothesis);
 			obj.ase = standardError(obj.data.inputs.test, obj.data.targets.test, obj.theta, obj.hypothesis, reglin);
@@ -66,7 +72,6 @@ classdef regressiondata
 		end
 
 		function [h] = eval(obj, inputs)
-
 			m = size(inputs, 1);
 
 			if strcmp(obj.regtype, 'logit') | strcmp(obj.regtype, 'linear')
