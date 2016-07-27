@@ -16,7 +16,9 @@ function result = test_trainLinear
 	t1 = toc;
 
 	tic
-	[theta2, J2, flag] = train(inputs, targets, @testhypothesis, lambda, [1;1], options);
+
+	costfun = @(theta, lambda) costfunction(inputs, targets, theta, @testhypothesis, lambda);
+	[theta2, J2, flag] = train(costfun, lambda, [1;1], options);
 	t2 = toc;
 
 %	disp([t1, t2])
