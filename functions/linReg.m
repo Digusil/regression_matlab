@@ -1,9 +1,6 @@
 %% linReg: calculate a linear regression
 
-% ToDo: savable fit object
 function [fit_data] = linReg(data, lambda_list)
-
-	%data = prepareLinReg(inputs, targets);
 
 	if nargin < 2
 		lambda_list = [0, 10.^linspace(-6,3,1e3)];

@@ -13,10 +13,12 @@ classdef regressiondata
 		options
 	end
 	properties(SetAccess = private)%, Hidden = true)
+		hypoarg
 		hypothesis
 		hypothesiscode
 		hypothesisname
 		regtype
+		userhypothesis
 	end
 	methods
 		function obj = regressiondata(hypothesis, theta, lambda, data, regtype, varargin)
@@ -30,9 +32,17 @@ classdef regressiondata
 
 			addOptional(p, 'regoptions', [], @isstruct);
 
+			if verLessThan('matlab', '8.2')
+				addParamValue(p, 'hypoarg', cell(0), @iscell);
+			else
+				addParameter(p, 'hypoarg', cell(0), @iscell)
+			end
+
 			parse(p, hypothesis, theta, lambda, data, regtype, varargin{:});
 
-			obj.hypothesis = p.Results.hypothesis;
+			obj.hypoarg = p.Results.hypoarg;
+			obj.userhypothesis = p.Results.hypothesis;
+			obj.hypothesis = @(x, theta) p.Results.hypothesis(x, theta, obj.hypoarg{:}); %p.Results.hypothesis;
 			obj.theta = p.Results.theta;
 			obj.lambda = p.Results.lambda;
 			obj.data = p.Results.data;
@@ -59,16 +69,22 @@ classdef regressiondata
 		end
 		
 		function obj = saveobj(obj)
-			filetmp = functions(obj.hypothesis);
-			obj.hypothesisname = filetmp.function;
-			obj.hypothesiscode = fileread(filetmp.file);
+			if strcmp(obj.regtype, 'common')
+				filetmp = functions(obj.userhypothesis);
+				obj.hypothesisname = filetmp.function;
+				obj.hypothesiscode = fileread(filetmp.file);
+			end
 		end
 		
 		function restorehypo(obj)
-			fileID = fopen([obj.hypothesisname, '.m'],'w');
-			fwrite(fileID, obj.hypothesiscode);
-			fclose(fileID);
-			obj.hypothesis = str2func(obj.hypothesisname);
+			if ~isempty(obj.hypothesisname)
+				fileID = fopen([obj.hypothesisname, '.m'],'w');
+				fwrite(fileID, obj.hypothesiscode);
+				fclose(fileID);
+				obj.hypothesis = str2func(obj.hypothesisname);
+			else
+				warning('None hypothesis code is saved!')
+			end
 		end
 
 		function [h] = eval(obj, inputs)

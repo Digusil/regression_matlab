@@ -1,9 +1,6 @@
 %% regression: train a regression with bias
 
-% ToDo: savable fit object
 function [fit_data] = logitReg(data, theta0, options)
-
-	%data = prepareRegression(inputs, targets);
 
 	if nargin > 2
 		options_tmp = optimset('Display','off');

@@ -1,6 +1,6 @@
 %% regression: train a kernel-regression
 
-% ToDo: savable fit object
+% ToDo: data reduction for eval function
 function [fit_data] = kernelReg(data, varargin)
 
 	p = inputParser;
@@ -10,24 +10,24 @@ function [fit_data] = kernelReg(data, varargin)
 	addOptional(p, 'options', [], @isstruct);
 
 	if verLessThan('matlab', '8.2')
-		addParamValue(p, 'kernel', 'gaussian', @ischar);
+		addParamValue(p, 'kernelname', 'gaussian', @ischar);
 		addParamValue(p, 'kernelscaling', 'unscaled', @ischar);
 		addParamValue(p, 'mode', 'single', @ischar);
 	else
-		addParameter(p, 'kernel', 'gaussian', @ischar);
+		addParameter(p, 'kernelname', 'gaussian', @ischar);
 		addParameter(p, 'kernelscaling', 'unscaled', @ischar);
 		addParameter(p, 'mode', 'single', @ischar);
 	end
 
 	parse(p, data, varargin{:});
 
-	regoptions.kernel = p.Results.kernel;
+	regoptions.kernelname = p.Results.kernelname;
 	regoptions.kernelscaling = p.Results.kernelscaling;
 	regoptions.mode = p.Results.mode;
 
 	u_feature_train = krFeature(data.inputs.validate, data.inputs.train);
 	
-	switch p.Results.kernel
+	switch p.Results.kernelname
 		case 'gaussian'
 			kernelFunction = @(u) gaussianKernel(u);
 			first_h = estimateH(data.inputs.train);
@@ -58,6 +58,8 @@ function [fit_data] = kernelReg(data, varargin)
 		otherwise
 			error('Wrong kernel function! Choose a valid kernel function.')
 	end
+
+	regoptions.kernel = kernelFunction;
 	
 	switch p.Results.mode
 		case 'single'
@@ -77,12 +79,23 @@ function [fit_data] = kernelReg(data, varargin)
 	costfun = @(theta, lambda) costfunction(u_feature_train, data.targets.validate, theta, kernel_hypothesis, lambda);
 	[theta, J, lambda, flag] = train(costfun, 0, theta0, p.Results.options);
 
-	kernel_hypothesis = @(x, theta) nadarayaWatsonEstimator(krFeature(x, data.inputs.train),...
-															data.targets.train,...
-															kernelFunction,...
-															theta,...
-															p.Results.kernelscaling);
+%	kernel_hypothesis = @(x, theta) nadarayaWatsonEstimator(krFeature(x, data.inputs.train),...
+%															data.targets.train,...
+%															kernelFunction,...
+%															theta,...
+%															p.Results.kernelscaling);
 
-	fit_data = regressiondata(kernel_hypothesis, theta, [], data, 'kernel', regoptions);
+	kernel_hypothesis = @(x, theta, itrain, ttrain, kernel, kernelscaling)...
+						nadarayaWatsonEstimator(krFeature(x, itrain),...
+												ttrain,...
+												kernel,...
+												theta,...
+												kernelscaling);
+
+	fit_data = regressiondata(kernel_hypothesis, theta, [], data, 'kernel', regoptions, 'hypoarg',...
+							  {data.inputs.train,...
+							  data.targets.train,...
+							  kernelFunction,...
+							  p.Results.kernelscaling});
 
 end
