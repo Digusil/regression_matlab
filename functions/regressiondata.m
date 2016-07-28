@@ -25,14 +25,16 @@ classdef regressiondata
 			p = inputParser; 
 
 			addRequired(p, 'hypothesis', @(x) isa(x,'function_handle'));
-			addRequired(p, 'theta', @(x)validateattributes(x,{'numeric'},{'column'}));
+			addRequired(p, 'theta', @(x) size(x,2) == 1);
 			addRequired(p, 'lambda', @isnumeric);
 			addRequired(p, 'data', @isstruct);
 			addRequired(p, 'regtype', @ischar);
 
-			addOptional(p, 'regoptions', [], @isstruct);
+			addOptional(p, 'regoptions', [], @(x) isempty(x) | isstruct(x));
 
-			if verLessThan('matlab', '8.2')
+			if exist('OCTAVE_VERSION', 'builtin') ~= 0
+				addParamValue(p, 'hypoarg', cell(0), @iscell);
+			elseif verLessThan('matlab', '8.2')
 				addParamValue(p, 'hypoarg', cell(0), @iscell);
 			else
 				addParameter(p, 'hypoarg', cell(0), @iscell)

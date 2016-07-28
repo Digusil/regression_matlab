@@ -3,13 +3,17 @@
 % ToDo: data reduction for eval function
 function [fit_data] = kernelReg(data, varargin)
 
-	p = inputParser;
+	p = inputParser();
 %	p.KeepUnmatched = true;
 
 	addRequired(p, 'data', @isstruct);
-	addOptional(p, 'options', [], @isstruct);
+	addOptional(p, 'options', [], @(x) isempty(x) | isstruct(x));
 
-	if verLessThan('matlab', '8.2')
+	if exist('OCTAVE_VERSION', 'builtin') ~= 0
+		addParamValue(p, 'kernelname', 'gaussian', @ischar);
+		addParamValue(p, 'kernelscaling', 'unscaled', @ischar);
+		addParamValue(p, 'mode', 'single', @ischar);
+	elseif verLessThan('matlab', '8.2')
 		addParamValue(p, 'kernelname', 'gaussian', @ischar);
 		addParamValue(p, 'kernelscaling', 'unscaled', @ischar);
 		addParamValue(p, 'mode', 'single', @ischar);
