@@ -2,14 +2,16 @@ function [data, id_data] = splitDataRandom(inputs, targets, varargin)
 
 	defaultdatasplit = [60, 20, 20];
 
-	p = inputParser;
+	p = inputParser();
 	p.KeepUnmatched = true;
 
 	addRequired(p, 'inputs', @isnumeric);
-	addRequired(p, 'targets', @(x)validateattributes(x,{'numeric'},{'column'}));
-	addOptional(p, 'id_data', [], @iscell);
+	addRequired(p, 'targets', @(x) isnumeric(x) & size(x,2) == 1);
+	addOptional(p, 'id_data', [], @(x) isempty(x) | iscell(x));
 
-	if verLessThan('matlab', '8.2')
+	if exist('OCTAVE_VERSION', 'builtin') ~= 0
+		addParamValue(p, 'datasplit', [], @(x) isempty(x) | (isnumeric(x) & all(size(x,2) == [1,3])));
+	elseif verLessThan('matlab', '8.2')
 		addParamValue(p, 'datasplit', [], @(x) validateattributes(x,{'numeric'},{'size',[1,3]}));
 	else
 		addParameter(p, 'datasplit', [], @(x) validateattributes(x,{'numeric'},{'size',[1,3]}));

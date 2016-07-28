@@ -30,9 +30,11 @@ classdef regressiondata
 			addRequired(p, 'data', @isstruct);
 			addRequired(p, 'regtype', @ischar);
 
-			addOptional(p, 'regoptions', [], @isstruct);
+			addOptional(p, 'regoptions', [], @(x) isempty(x) | isstruct(x));
 
-			if verLessThan('matlab', '8.2')
+			if exist('OCTAVE_VERSION', 'builtin') ~= 0
+				addParamValue(p, 'hypoarg', cell(0), @iscell);
+			elseif verLessThan('matlab', '8.2')
 				addParamValue(p, 'hypoarg', cell(0), @iscell);
 			else
 				addParameter(p, 'hypoarg', cell(0), @iscell)
