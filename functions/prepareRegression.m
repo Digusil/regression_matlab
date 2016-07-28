@@ -10,7 +10,7 @@ function [data, id_data] = prepareRegression(inputs, targets, varargin)
 
 	if exist('OCTAVE_VERSION', 'builtin') ~= 0
 		addParamValue(p, 'scaling', true, @islogical);
-		addParamValue(p, 'datasplit', [], @(x) isempty(x) | (isnumeric(x) & all(size(x,2) == [1,3])));
+		addParamValue(p, 'datasplit', [], @(x) isempty(x) | (isnumeric(x) & all(size(x) == [1,3])));
 	elseif verLessThan('matlab', '8.2')
 		addParamValue(p, 'scaling', true, @islogical);
 		addParamValue(p, 'datasplit', [], @(x) validateattributes(x,{'numeric'},{'size',[1,3]}));

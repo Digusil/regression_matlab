@@ -25,7 +25,7 @@ classdef regressiondata
 			p = inputParser; 
 
 			addRequired(p, 'hypothesis', @(x) isa(x,'function_handle'));
-			addRequired(p, 'theta', @(x)validateattributes(x,{'numeric'},{'column'}));
+			addRequired(p, 'theta', @(x) size(x,2) == 1);
 			addRequired(p, 'lambda', @isnumeric);
 			addRequired(p, 'data', @isstruct);
 			addRequired(p, 'regtype', @ischar);
