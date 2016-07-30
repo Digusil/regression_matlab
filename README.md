@@ -1,13 +1,6 @@
 # regression_matlab
-A simple set of functions to calculate a regression.
-Pairs of input and target values are randomly distributed in training,
-validation and test set. Using the training set values of theta can be calculated
-for any hypothesis. Lambda is determined by detecting an optimum of the costfunction.
-Afterwards the coefficient of determination is computed for the test set.
+A set of functions that make it possible to calculate different regression-models. The choices are Linear, Logistic and Kernel Regression. The script can be implemented in MATLAB and Octave.
 
-This script is under construction.
-
-=======
 ## Examples
 **example_linReg.m** calculates the regression for a linear hypothesis.
 
