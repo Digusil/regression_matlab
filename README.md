@@ -1,5 +1,5 @@
 # regression_matlab
-A set of functions that make it possible to calculate different regression-models. The choices are Linear, Logistic and Kernel Regression. The script can be implemented in MATLAB and Octave.
+A set of functions that make it possible to calculate different regression-models. The choices are Linear, Logistic and Kernel Regression. The script can be implemented in MATLAB and Octave. To get an insight of the usage and the advantages of this set please see "Examples" and "Motivation and Features".
 
 ## Examples
 **example_linReg.m** calculates the regression for a linear hypothesis.
@@ -15,7 +15,7 @@ the best fitting value of lambda and the calculated coefficient of determination
 **example_calcReg** calculates the regression for a hypothesis given in
 **example_hypothesis.m**.
 
-## Motivation
+## Motivation and Features
 The reason for programming this set of functions was to obtain full control over the calculation of the Regression. As well the advanced User should get an insight, what is happening behind function calls. In addition, a special feature of the set is the extension of the range of functions to Kernel Regression and Logistic Regression. All Regression Models can be implemented the same, easy way through the unification of the parameters and input variables.
 
 The development of the program is ensured by constant self-use and research requirements.
