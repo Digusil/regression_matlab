@@ -6,6 +6,7 @@ classdef regressiondata
 		df
 		R2
 		adjR2
+		sigma
 		ase
 		rms
 		pvalue
@@ -62,7 +63,7 @@ classdef regressiondata
 			end
 
 			reglin = regLinearize(obj.data.inputs.test, obj.theta, obj.hypothesis);
-			obj.ase = standardError(obj.data.inputs.test, obj.data.targets.test, obj.theta, obj.hypothesis, reglin);
+			[obj.sigma, obj.ase] = standardError(obj.data.inputs.test, obj.data.targets.test, obj.theta, obj.hypothesis, reglin);
 			obj.pvalue = (1-tcdf(abs(obj.theta./obj.ase), obj.df))*2;
 
 			if strcmp(obj.regtype, 'logit')
