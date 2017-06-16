@@ -20,10 +20,10 @@ options = optimset('Display','off', 'GradObj','on');
 data = prepareRegression(inputs, z(:));
 
 tic						% start time measurement
-fitdata = kernelReg(data, options, 'mode', 'multi');		% fit data
+fitdata = kernelReg(data, options, 'mode', 'single');		% fit data
 t = toc;				% stop time measurement
 
-mse = mean((fitdata.function(inputs) - z(:)).^2);		% calculate the mean square error
+mse = mean((fitdata.eval(inputs) - z(:)).^2);			% calculate the mean square error
 
 disp(['MSE: ',num2str(mse, '%.3e'),...					% display the MSE and the calculation time
 	  ' with ', num2str(t, '%.3e'),' s'])

@@ -25,7 +25,7 @@ t = toc;				% stop time measurement
 %% plot result
 figure()
 
-plot(x, fitdata.function(inputs))
+plot(x, fitdata.eval(inputs))
 hold on
 scatter(x,y)
 hold off

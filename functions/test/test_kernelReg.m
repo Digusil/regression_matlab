@@ -22,7 +22,7 @@ function result = test_kernelReg
 	fitdata = kernelReg(data, options, 'mode', 'single', 'kernelscaling', 'scaled');
 	t = toc;
 
-	rmse = sqrt(mean((fitdata.function(inputs) - z(:)).^2));
+	rmse = sqrt(mean((fitdata.eval(inputs) - z(:)).^2));
 
 	% disp(['RMSE: ',num2str(rmse, '%.3e'),...
 	% 	  ' with ', num2str(t, '%.3e'),' s'])
