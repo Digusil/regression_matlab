@@ -1,4 +1,4 @@
-function se = standardError(inputs, targets, theta, hypothesis, reglin)
+function [sigma, se] = standardError(inputs, targets, theta, hypothesis, reglin)
 
 	tmp = hypothesis(inputs, theta) - targets;
 

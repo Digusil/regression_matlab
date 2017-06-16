@@ -1,26 +1,30 @@
-close all
-clear all
-clc
+function result = test_linreg
 
-init
+	init
 
-[x, y] = meshgrid(linspace(-10,10,1e2), linspace(-10,10,1e2));
+	[x, y] = meshgrid(linspace(-10,10,1e2), linspace(-10,10,1e2));
 
-foo = @(x,y) (x+y).^2;
+	foo = @(x,y) (x+y).^2;
 
-z = foo(x,y);
+	z = foo(x,y);
 
-inputs = [x(:), y(:), x(:).^2, y(:).^2, x(:).*y(:)];
+	inputs = [x(:), y(:), x(:).^2, y(:).^2, x(:).*y(:)];
 
-data = prepareLinReg(inputs, z(:));
+	data = prepareLinReg(inputs, z(:));
 
-tic
-fitdata = linReg(data);
-t = toc;
+	tic
+	fitdata = linReg(data);
+	t = toc;
 
-mse = mean((fitdata.function(inputs) - z(:)).^2);
+	rmse = sqrt(mean((fitdata.eval(inputs) - z(:)).^2));
 
-disp(['MSE: ',num2str(mse, '%.3e'),...
-	  ' with ', num2str(t, '%.3e'),' s'])
+	% disp(['MSE: ',num2str(mse, '%.3e'),...
+	% 	  ' with ', num2str(t, '%.3e'),' s'])
 
-check('linReg', mse < 1e-6, true)
+	if nargout > 0
+		result = check('linReg', rmse < 1e-6, true);
+	else
+		check('linReg', rmse < 1e-6, true)
+	end
+
+end

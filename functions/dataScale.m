@@ -1,13 +1,15 @@
 function [y, mu, sigma] = dataScale(x, varargin)
 
-    p = inputParser;
+    p = inputParser();
     p.KeepUnmatched = true;
 
     addRequired(p, 'x', @isnumeric);
-    addOptional(p, 'mu', [], @isnumeric);
-    addOptional(p, 'sigma', [], @isnumeric);
+    addOptional(p, 'mu', [], @(x) isempty(x) | isnumeric(x));
+    addOptional(p, 'sigma', [], @(x) isempty(x) | isnumeric(x));
 
-    if verLessThan('matlab', '8.2')
+    if exist('OCTAVE_VERSION', 'builtin') ~= 0
+        addParamValue(p, 'mode', 'std', @ischar);
+    elseif verLessThan('matlab', '8.2')
         addParamValue(p, 'mode', 'std', @ischar);
     else
         addParameter(p, 'mode', 'std', @ischar);
@@ -24,8 +26,8 @@ function [y, mu, sigma] = dataScale(x, varargin)
     if isempty(p.Results.mu)     
         switch p.Results.mode
             case 'std'
-                mu = mean(x,1);
-                sigma = std(x,[],1);
+                mu = nanmean(x,1);
+                sigma = nanstd(x,[],1);
             case 'range'
                 mu = mean(x,1);
                 sigma = range(x,1);

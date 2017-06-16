@@ -1,29 +1,37 @@
 %% regression: train a kernel-regression
 
-% ToDo: savable fit object
+% ToDo: data reduction for eval function
 function [fit_data] = kernelReg(data, varargin)
 
-	p = inputParser;
+	p = inputParser();
 %	p.KeepUnmatched = true;
 
 	addRequired(p, 'data', @isstruct);
-	addOptional(p, 'options', [], @isstruct);
+	addOptional(p, 'options', [], @(x) isempty(x) | isstruct(x));
 
-	if verLessThan('matlab', '8.2')
-		addParamValue(p, 'kernel', 'gaussian', @ischar);
+	if exist('OCTAVE_VERSION', 'builtin') ~= 0
+		addParamValue(p, 'kernelname', 'gaussian', @ischar);
+		addParamValue(p, 'kernelscaling', 'unscaled', @ischar);
+		addParamValue(p, 'mode', 'single', @ischar);
+	elseif verLessThan('matlab', '8.2')
+		addParamValue(p, 'kernelname', 'gaussian', @ischar);
 		addParamValue(p, 'kernelscaling', 'unscaled', @ischar);
 		addParamValue(p, 'mode', 'single', @ischar);
 	else
-		addParameter(p, 'kernel', 'gaussian', @ischar);
+		addParameter(p, 'kernelname', 'gaussian', @ischar);
 		addParameter(p, 'kernelscaling', 'unscaled', @ischar);
 		addParameter(p, 'mode', 'single', @ischar);
 	end
 
 	parse(p, data, varargin{:});
 
+	regoptions.kernelname = p.Results.kernelname;
+	regoptions.kernelscaling = p.Results.kernelscaling;
+	regoptions.mode = p.Results.mode;
+
 	u_feature_train = krFeature(data.inputs.validate, data.inputs.train);
 	
-	switch p.Results.kernel
+	switch p.Results.kernelname
 		case 'gaussian'
 			kernelFunction = @(u) gaussianKernel(u);
 			first_h = estimateH(data.inputs.train);
@@ -54,6 +62,8 @@ function [fit_data] = kernelReg(data, varargin)
 		otherwise
 			error('Wrong kernel function! Choose a valid kernel function.')
 	end
+
+	regoptions.kernel = kernelFunction;
 	
 	switch p.Results.mode
 		case 'single'
@@ -68,57 +78,28 @@ function [fit_data] = kernelReg(data, varargin)
 																	theta,...
 																	p.Results.kernelscaling);
 
-	theta = train(u_feature_train, data.targets.validate, kernel_hypothesis, 0, theta0, p.Results.options);
+%	theta = train(u_feature_train, data.targets.validate, kernel_hypothesis, 0, theta0, p.Results.options);
 
-	%data = prepareRegression(inputs, targets);
+	costfun = @(theta, lambda) costfunction(u_feature_train, data.targets.validate, theta, kernel_hypothesis, lambda);
+	[theta, J, lambda, flag] = train(costfun, 0, theta0, p.Results.options);
 
-	%lambda_list = 10.^linspace(-6,3,1e3);
+%	kernel_hypothesis = @(x, theta) nadarayaWatsonEstimator(krFeature(x, data.inputs.train),...
+%															data.targets.train,...
+%															kernelFunction,...
+%															theta,...
+%															p.Results.kernelscaling);
 
-	%lambda = inf;
-	%J = inf;
+	kernel_hypothesis = @(x, theta, itrain, ttrain, kernel, kernelscaling)...
+						nadarayaWatsonEstimator(krFeature(x, itrain),...
+												ttrain,...
+												kernel,...
+												theta,...
+												kernelscaling);
 
-	%for idl = 1:length(lambda_list)
-	%	tmp_theta = train(data.inputs.train, data.targets.train, userhypothesis, lambda_list(idl), theta0, options);
-
-	%	tmp_J = costfunction(data.inputs.validate, data.targets.validate, tmp_theta, userhypothesis, lambda_list(idl));
-
-	%	if tmp_J < J
-	%		theta = tmp_theta;
-	%		lambda = lambda_list(idl);
-	%		J = tmp_J;
-	%	end
-	%end
-
-	kernel_hypothesis = @(x, theta) nadarayaWatsonEstimator(krFeature(x, data.inputs.train),...
-															data.targets.train,...
-															kernelFunction,...
-															theta,...
-															p.Results.kernelscaling);
-
-	fit_data.function = @(x) hypothesis(x, theta, kernel_hypothesis, data);
-	fit_data.theta = theta;
-	fit_data.lambda = [];
-	fit_data.R2 = getR2(theta, kernel_hypothesis, data);
-	fit_data.data = data;
-	fit_data.df = size(data.targets.train, 1) - length(theta) -1;
-	fit_data.adjR2 = 1-(1-fit_data.R2)*(size(data.targets.train, 1)-1)/fit_data.df;
-
-	reglin = regLinearize(data.inputs.test, theta, kernel_hypothesis);
-	fit_data.ase = standardError(data.inputs.test, data.targets.test, fit_data.theta, kernel_hypothesis, reglin);
-	fit_data.pvalue = (1-tcdf(abs(theta./fit_data.ase), fit_data.df))*2;
-
-	fit_data.rms = getRMS(theta, kernel_hypothesis, data);
-
-end
-
-%% hypothesis: linear regression hypothesis
-function [h] = hypothesis(inputs, theta, userhypothesis, data)
-
-	m = size(inputs,1);
-	x = (inputs - ones(m,1)*data.inputs.mu)./(ones(m,1)*data.inputs.sigma);
-
-	h = userhypothesis(x, theta);
-
-	h = h.*(ones(m,1)*data.targets.sigma) + ones(m,1)*data.targets.mu;
+	fit_data = regressiondata(kernel_hypothesis, theta, [], data, 'kernel', regoptions, 'hypoarg',...
+							  {data.inputs.train,...
+							  data.targets.train,...
+							  kernelFunction,...
+							  p.Results.kernelscaling});
 
 end

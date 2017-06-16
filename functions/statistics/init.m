@@ -1,8 +1,10 @@
 %% init: add needed directories to path
 if ~exist('linReg.m','file')	% check if the path is already added
-	addpath('functions');
+	[pathstr,name,ext] = fileparts(mfilename('fullpath')); 	% get path of the init-file
+	addpath(fullfile(pathstr, 'functions'));				% add path
 end
 
 if ~exist('tcdf.m','file')
-	addpath(['functions', filesep, 'statistics'])
+	[pathstr,name,ext] = fileparts(mfilename('fullpath')); 	% get path of the init-file
+	addpath(fullfile(pathstr, 'functions', 'statistics'));	% add path
 end
